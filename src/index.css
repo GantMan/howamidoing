@@ -11,3 +11,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#mainContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex: 1;
+}
+
+.captureBox {
+  /* max-height: 600px; */
+}
+
+#inputVideo {
+  background-color: red;
+  width: 100%;
+  height: auto;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#captureContainer {
+  position: relative;
+  flex: 1
+}
+
+#resultsContainer {
+  background-color: blue;
+  flex: 1;
+}
