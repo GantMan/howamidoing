@@ -5,17 +5,27 @@
 .header {
   display: flex;
   justify-content: center;
+  background-color: rgba(0,165,0,0.05);
+  border: 1px dashed rgba(255,255,255,0.2);
+  margin: 0, 0, 4px, 0;
 }
 
-.header, h1 {
+.enjoying {
   font-family: 'Russo One', sans-serif;
   margin: 0 0.2em;
   color: #029832;
+  background: -webkit-linear-gradient(#097929 30%, #029832 40%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;  
 }
 
-.header, h1::after {
-  content: "?";
+.show {
+  font-family: 'Russo One', sans-serif;
+  margin: 0 -0.2em;
   color: #e53835;
+  background: -webkit-linear-gradient(0.55turn, #aa2624 30%, #e53835 20%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;    
 }
 
 .App-logo {

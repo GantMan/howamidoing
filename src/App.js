@@ -103,7 +103,8 @@ function App() {
     <div className="App">
       <div className="header">
         <img src={logo} height="50px" />
-        <h1>EnjoyingThe.Show</h1>
+        <h1 className="enjoying">EnjoyingThe.Show</h1>
+        <h1 className="show">?</h1>
       </div>
       <header className="App-header">
         <div id="mainContainer">
