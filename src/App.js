@@ -1,13 +1,37 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import * as faceapi from 'face-api.js';
 import {VictoryPie, VictoryTooltip} from 'victory';
 
+
 const videoRef = React.createRef()
 const canvasRef = React.createRef()
 
+const getFaceStats = (emotions) => {
+  // const fCount = emotions.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {})
+  const fCount = emotions.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {
+    neutral: 0, happy: 0, sad: 0, fearful: 0, angry: 0, disgusted: 0, surprised: 0
+  })
 
-const loadModelsAndAll = async () => {
+  const chart = [
+    { x: "Happy", y: fCount.happy },
+    { x: "Neutral", y: fCount.neutral },
+    { x: "Surprised", y: fCount.surprised },
+    { x: "Sad", y: fCount.sad },
+    { x: "Fearful", y: fCount.fearful },
+    { x: "Disgusted", y: fCount.disgusted },
+    { x: "Angry", y: fCount.angry },    
+  ]
+  const good = fCount.happy + fCount.neutral + fCount.surprised
+  const bad = fCount.sad + fCount.fearful + fCount.angry + fCount.disgusted
+  return {chart, good, bad, total: emotions.length}
+}
+
+function App() {
+  const [totalFaces, setTotalFaces] = useState(0)
+  const [faces, setFaces] = useState({})
+
+  const loadModelsAndAll = async () => {
     // Load all needed models
     await faceapi.nets.ssdMobilenetv1.loadFromUri('/')
     await faceapi.loadFaceLandmarkModel('/')
@@ -28,42 +52,41 @@ const loadModelsAndAll = async () => {
         resolve()
       }
     })
-}
+  }  
 
-const detectFaceStuff = async () => {
-  const videoEl = videoRef.current
-  const canvas = canvasRef.current  
-  const result = await faceapi.detectAllFaces(videoEl).withFaceExpressions()
-  if (result) {
-    // Check out result
-    const minConfidence = 0.05
-    const facesTotal = result.length
-    // Go turn all faces over minConfidence into strings
-    const facialExpressions = result.map(r => {
-      if (r.detection.score > minConfidence)
-        // potential outcomes: neutral, happy, sad, angry, fearful
-        return Object.keys(r.expressions).reduce((a, b) => r.expressions[a] > r.expressions[b] ? a : b);      
-    })
-
-    // Update numerical results
-    
-    // Display visual results
-    const dims = faceapi.matchDimensions(canvas, videoEl, true)
-    const resizedResult = faceapi.resizeResults(result, dims)
-    faceapi.draw.drawDetections(canvas, resizedResult)
-    faceapi.draw.drawFaceExpressions(canvas, resizedResult, minConfidence)
-  }
-
-  requestAnimationFrame(() => {
-    // calm down when hidden!
-    if (canvasRef.current) {
-      detectFaceStuff()
+  const detectFaceStuff = async () => {
+    const videoEl = videoRef.current
+    const canvas = canvasRef.current  
+    const result = await faceapi.detectAllFaces(videoEl).withFaceExpressions()
+    if (result) {
+      // Check out result
+      const minConfidence = 0.05
+      // Go turn all faces over minConfidence into strings
+      const facialExpressions = result.map(r => {
+        if (r.detection.score > minConfidence)
+          return Object.keys(r.expressions).reduce((a, b) => r.expressions[a] > r.expressions[b] ? a : b);      
+      })
+  
+      // Update numerical results
+      const faceStats = getFaceStats(facialExpressions)
+      setTotalFaces(result.length)
+      setFaces(faceStats)
+      
+      // Display visual results
+      const dims = faceapi.matchDimensions(canvas, videoEl, true)
+      const resizedResult = faceapi.resizeResults(result, dims)
+      faceapi.draw.drawDetections(canvas, resizedResult)
+      faceapi.draw.drawFaceExpressions(canvas, resizedResult, minConfidence)
     }
-  })
-
-}
-
-function App() {
+  
+    requestAnimationFrame(() => {
+      // calm down when hidden!
+      if (canvasRef.current) {
+        detectFaceStuff()
+      }
+    })
+  
+  }  
 
   useEffect(() => {
     // loadModelsAndAll()
@@ -76,11 +99,12 @@ function App() {
           <div id="captureContainer">
             <video ref={videoRef} id="inputVideo" className="captureBox" autoPlay muted playsInline></video>
             <canvas id="overlay" ref={canvasRef} className="captureBox" />
+            <h4>Faces Above Min Confidence: {faces.total}</h4>
+            <h4>Faces Detected: {totalFaces}</h4>
+            <h4>Good: {faces.good}</h4>
+            <h4>Bad: {faces.bad}</h4>
           </div>
           <div id="resultsContainer">
-            <h4>Faces Detected: 0</h4>
-            <h4>Good: 0</h4>
-            <h4>Bad: 0</h4>
             <VictoryPie
               animate={{
                 duration: 200
@@ -88,27 +112,24 @@ function App() {
               style={{ labels: { fontSize: 20, fontWeight: "bold" } }}
               labelRadius={({ innerRadius }) => innerRadius + 50 }
               labelComponent={<VictoryTooltip/>}
-              colorScale={["green", "#ff2200", "orange", "red", "pink"]}
-              data={[
-                { x: "Happy", y: 10, label: "Happy" },
-                { x: "Neutral", y: 2 },
-                { x: "Sad", y: 2 },
-                { x: "Angry", y: 2 },
-                { x: "Fearful", y: 5 },
-              ]}
+              colorScale={["#029832", "#62b32b", "#C7EA46", "#fedb00", "#f97a00", "#ff5349", "#d50218"]}
+              data={faces.chart}
             />
           </div>
         </div>
+        <div>
+          
+        </div>
         <p>
-            Edit <code>src/App.js</code> and save to reload.
+            Code on <code>GitHub</code>
           </p>
           <a
             className="App-link"
-            href="https://reactjs.org"
+            href="http://gantlaborde.com/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React
+            By Gant Laborde
           </a>        
       </header>
     </div>
