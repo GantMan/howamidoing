@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
+import logo from './logo.svg'
 import * as faceapi from 'face-api.js';
 import {VictoryPie, VictoryTooltip} from 'victory';
 import Button from '@material-ui/core/Button';
@@ -10,7 +11,7 @@ import Slider from '@material-ui/core/Slider';
 const videoRef = React.createRef()
 const canvasRef = React.createRef()
 let minConfidence = 0.5
-let faceBoundaries = true
+let faceBoundaries = false
 
 const getFaceStats = (emotions) => {
   const fCount = emotions.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {
@@ -95,11 +96,15 @@ function App() {
   }  
 
   useEffect(() => {
-    loadModelsAndAll()
+    // loadModelsAndAll()
   }, []);  
 
   return (
     <div className="App">
+      <div className="header">
+        <img src={logo} height="50px" />
+        <h1>EnjoyingThe.Show</h1>
+      </div>
       <header className="App-header">
         <div id="mainContainer">
           <div id="captureContainer">

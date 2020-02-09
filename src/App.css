@@ -2,6 +2,22 @@
   text-align: center;
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.header, h1 {
+  font-family: 'Russo One', sans-serif;
+  margin: 0 0.2em;
+  color: #029832;
+}
+
+.header, h1::after {
+  content: "?";
+  color: #e53835;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
