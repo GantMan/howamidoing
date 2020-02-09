@@ -2,13 +2,17 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import * as faceapi from 'face-api.js';
 import {VictoryPie, VictoryTooltip} from 'victory';
-
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
 
 const videoRef = React.createRef()
 const canvasRef = React.createRef()
+let minConfidence = 0.5
+let faceBoundaries = true
 
 const getFaceStats = (emotions) => {
-  // const fCount = emotions.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {})
   const fCount = emotions.reduce((prev, curr) => (prev[curr] = ++prev[curr] || 1, prev), {
     neutral: 0, happy: 0, sad: 0, fearful: 0, angry: 0, disgusted: 0, surprised: 0
   })
@@ -28,7 +32,6 @@ const getFaceStats = (emotions) => {
 }
 
 function App() {
-  const [totalFaces, setTotalFaces] = useState(0)
   const [faces, setFaces] = useState({})
 
   const loadModelsAndAll = async () => {
@@ -47,7 +50,7 @@ function App() {
     // hold until the camera loads
     return new Promise((resolve, _) => {
       videoRef.current.onloadedmetadata = () => {
-        // right spot?
+        // Kick off right away
         detectFaceStuff()
         resolve()
       }
@@ -57,28 +60,31 @@ function App() {
   const detectFaceStuff = async () => {
     const videoEl = videoRef.current
     const canvas = canvasRef.current  
-    const result = await faceapi.detectAllFaces(videoEl).withFaceExpressions()
-    if (result) {
-      // Check out result
-      const minConfidence = 0.05
+    const result = await faceapi.detectAllFaces(videoEl, new faceapi.SsdMobilenetv1Options({ minConfidence })).withFaceExpressions()
+    if (result && result.length > 0) {
       // Go turn all faces over minConfidence into strings
       const facialExpressions = result.map(r => {
         if (r.detection.score > minConfidence)
           return Object.keys(r.expressions).reduce((a, b) => r.expressions[a] > r.expressions[b] ? a : b);      
-      })
+      }) 
   
       // Update numerical results
       const faceStats = getFaceStats(facialExpressions)
-      setTotalFaces(result.length)
       setFaces(faceStats)
       
       // Display visual results
-      const dims = faceapi.matchDimensions(canvas, videoEl, true)
-      const resizedResult = faceapi.resizeResults(result, dims)
-      faceapi.draw.drawDetections(canvas, resizedResult)
-      faceapi.draw.drawFaceExpressions(canvas, resizedResult, minConfidence)
+      if (faceBoundaries) {   
+        canvas.style.visibility='visible';    
+        const dims = faceapi.matchDimensions(canvas, videoEl, true)
+        const resizedResult = faceapi.resizeResults(result, dims)
+        faceapi.draw.drawDetections(canvas, resizedResult)
+        faceapi.draw.drawFaceExpressions(canvas, resizedResult, minConfidence)
+      } else {
+        canvas.style.visibility='hidden';
+      }
     }
   
+    console.log(minConfidence)
     requestAnimationFrame(() => {
       // calm down when hidden!
       if (canvasRef.current) {
@@ -89,7 +95,7 @@ function App() {
   }  
 
   useEffect(() => {
-    // loadModelsAndAll()
+    loadModelsAndAll()
   }, []);  
 
   return (
@@ -99,10 +105,13 @@ function App() {
           <div id="captureContainer">
             <video ref={videoRef} id="inputVideo" className="captureBox" autoPlay muted playsInline></video>
             <canvas id="overlay" ref={canvasRef} className="captureBox" />
-            <h4>Faces Above Min Confidence: {faces.total}</h4>
-            <h4>Faces Detected: {totalFaces}</h4>
+            <h4>Faces Detected: {faces.total}</h4>
             <h4>Good: {faces.good}</h4>
             <h4>Bad: {faces.bad}</h4>
+            <ButtonGroup variant="contained" color="primary" aria-label="Image vs Webcam">
+              <Button onClick={() => faceBoundaries = true}>Face Boundaries On</Button>
+              <Button onClick={() => faceBoundaries = false}>Boundaries Off</Button>
+            </ButtonGroup>          
           </div>
           <div id="resultsContainer">
             <VictoryPie
@@ -118,7 +127,18 @@ function App() {
           </div>
         </div>
         <div>
-          
+          <Typography id="discrete-slider-custom" gutterBottom>
+              Minimum Face Confidence
+            </Typography>
+            <Slider
+              aria-labelledby="discrete-slider-custom"
+              step={0.05}
+              min={0}
+              max={1}
+              defaultValue={0.5}
+              valueLabelDisplay="auto"
+              onChange={(_e, newVal) => minConfidence = newVal}
+          />  
         </div>
         <p>
             Code on <code>GitHub</code>
