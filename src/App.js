@@ -96,7 +96,7 @@ function App() {
   }  
 
   useEffect(() => {
-    // loadModelsAndAll()
+    loadModelsAndAll()
   }, []);  
 
   return (
