@@ -8,6 +8,12 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 
+// Setup WASM
+import { setWasmPath } from '@tensorflow/tfjs-backend-wasm'
+setWasmPath('/tfjs-backend-wasm.wasm')
+// We can now force a WASM backend and print it for proof!
+// tf.setBackend('wasm').then(console.log('The Backend is', tf.getBackend()))
+
 const videoRef = React.createRef()
 const canvasRef = React.createRef()
 let minConfidence = 0.5

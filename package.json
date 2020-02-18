@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.1",
+    "@tensorflow/tfjs-backend-wasm": "^1.5.2-alpha1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -14,8 +15,10 @@
     "victory": "^34.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public", 
+    "winwasm": "PowerShell -Command cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public -Force",   
+    "start": "yarn wasm && react-scripts start",
+    "build": "yarn wasm && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

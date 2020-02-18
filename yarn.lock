@@ -1392,6 +1392,13 @@
     "@svgr/plugin-svgo" "^4.3.1"
     loader-utils "^1.2.3"
 
+"@tensorflow/tfjs-backend-wasm@^1.5.2-alpha1":
+  version "1.5.2-alpha1"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-backend-wasm/-/tfjs-backend-wasm-1.5.2-alpha1.tgz#e7275fad79569d7c3abebf97b77b065354bcfa42"
+  integrity sha512-J+CSf8nqKxYisnb7DtfK/6B66Jy9TAjREZRY6vQKVqc5uQeMx49D59D4+tHQVjfEBtf6PZYobWUrXogJTNP71Q==
+  dependencies:
+    "@types/emscripten" "~0.0.34"
+
 "@tensorflow/tfjs-core@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-core/-/tfjs-core-1.4.0.tgz#045c91f93cb3ea77473b664c0d1dbad675d7f046"
@@ -1477,6 +1484,11 @@
   integrity sha512-yGeB2dHEdvxjP0y4UbRtQaSkXJ9649fYCmIdRoul5kfAoGCwxuCbMhag0k3RPfnuh9kPGm8x89btcfDEXdVWGw==
   dependencies:
     "@babel/types" "^7.3.0"
+
+"@types/emscripten@~0.0.34":
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/@types/emscripten/-/emscripten-0.0.34.tgz#12b4a344274fb102ff2f6c877b37587bc3e46008"
+  integrity sha512-QSb9ojDincskc+uKMI0KXp8e1NALFINCrMlp8VGKGcTSxeEyRTTKyjWw75NYrCZHUsVEEEpr1tYHpbtaC++/sQ==
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
