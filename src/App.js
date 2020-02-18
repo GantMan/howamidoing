@@ -41,12 +41,18 @@ function App() {
     await faceapi.loadFaceLandmarkModel('/')
     await faceapi.loadFaceExpressionModel('/')
     // get webcam running
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: 'user'
-      }
-    })
+    let stream
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: 'user'
+        }
+      })
+    } catch (err) {
+      alert('Sorry - Your Browser isn\'t allowing access to your webcam.  Try a different browser for this device?')
+      console.error('getUserMedia error', err);
+    }
     videoRef.current.srcObject = stream
     // hold until the camera loads
     return new Promise((resolve, _) => {
@@ -156,7 +162,15 @@ function App() {
             rel="noopener noreferrer"
           >
             By Gant Laborde
-          </a>        
+          </a>     
+          <a
+            className="App-link"
+            href="https://academy.infinite.red/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn AI/ML - Free Courses Here
+          </a>              
       </header>
     </div>
   );
